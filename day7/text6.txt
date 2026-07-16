@@ -1,0 +1,190 @@
+create database Sales_System;
+use Sales_System;
+
+create table Customers(
+ CustomerID varchar(10),
+ Name varchar(20),
+ City varchar(25),
+ primary key(CustomerID)
+);
+
+create table Orders(
+OrderID varchar(10),
+CustomerID varchar(10),
+OrderDate date,
+primary key(OrderID),
+foreign key(CustomerID) references Customers(CustomerID)
+);
+
+create table Products(
+ ProductID varchar(10), 
+ ProductName varchar(20),
+ Price double,
+ primary key(ProductID)
+);
+
+create table OrderDetails(
+OrderDetailID varchar(10),
+OrderID varchar(10),
+ProductID varchar(10),
+Quantity int(10),
+primary key(OrderDetailID),
+foreign key(OrderID) references Orders(OrderID),
+foreign key(ProductID) references Products(ProductID)
+);
+
+create table Payments( 
+PaymentID varchar(10),
+OrderID varchar(10),
+AmountPaid double,
+primary key (PaymentID),
+foreign key (OrderID) references Orders(OrderID) 
+);
+
+/*data inserting*/ 
+
+INSERT INTO Customers VALUES
+(1,'Nimal','Colombo'),
+(2,'Kamal','Kandy'),
+(3,'Sunil','Galle'),
+(4,'Amal','Jaffna'),
+(5,'Ravi','Colombo'),
+(6,'Saman','Kurunegala'),
+(7,'Nadee','Matara'),
+(8,'Kumari','Gampha'),
+(9,'Rohan','Galle'),
+(10,'Dilani','Colombo'),
+(11,'Ishara','Colombo');
+
+
+INSERT INTO Products VALUES
+(1,'Laptop',150000),
+(2,'Mouse',2000),
+(3,'Keyboard',5000),
+(4,'Monitor',30000),
+(5,'Printer',25000),
+(6,'Tablet',80000),
+(7,'Phone',120000),
+(8,'Speaker',7000),
+(9,'Camera',90000),
+(10,'Router',6000),
+(11,'SSD',20000);
+
+INSERT INTO Orders VALUES
+(1,1,'2024-01-01'),
+(2,2,'2024-01-02'),
+(3,3,'2024-01-03'),
+(4,4,'2024-01-04'),
+(5,5,'2024-01-05'),
+(6,6,'2024-01-06'),
+(7,7,'2024-01-07'),
+(8,8,'2024-01-08'),
+(9,9,'2024-01-09'),
+(10,10,'2024-01-10'),
+(11,1,'2024-01-11');
+
+INSERT INTO OrderDetails VALUES
+(1,1,1,1),
+(2,1,2,2),
+(3,2,3,1),
+(4,3,4,1),
+(5,4,5,1),
+(6,5,6,1),
+(7,6,7,1),
+(8,7,8,2),
+(9,8,9,1),
+(10,9,10,3),
+(11,10,11,2);
+
+INSERT INTO Payments VALUES
+(1,1,152000),
+(2,2,5000),
+(3,3,30000),
+(4,4,25000),
+(5,5,80000),
+(6,6,120000),
+(7,7,14000),
+(8,8,90000),
+(9,9,18000),
+(10,10,6000),
+(11,11,20000);
+
+B)
+1.
+DELIMITER //
+CREATE procedure GetCustomerById(in user_id INT) 
+BEGIN
+    SELECT Name,City
+    FROM Customers
+    WHERE CustomerID = user_id;
+END //
+DELIMITER ;
+
+CALL GetCustomerById(5);
+
+2.
+DELIMITER //
+CREATE procedure GetordersById(in user_id INT) 
+BEGIN
+    SELECT OrderID
+    FROM Orders
+    WHERE CustomerID = user_id;
+END //
+DELIMITER ;
+
+CALL GetordersById(4);
+
+3.
+
+
+DELIMITER //
+CREATE procedure GetProductsByPId(in user_id INT) 
+BEGIN
+    SELECT  ProductName,Price
+    FROM Products
+    WHERE ProductID = user_id;
+END //
+DELIMITER ;
+
+CALL GetProductsByPId(3);
+
+4.
+DELIMITER //
+CREATE procedure getPaymentsbyID(in user_id INT) 
+BEGIN
+    SELECT  PaymentID,AmountPaid
+    FROM Payments
+    WHERE OrderID = user_id;
+END //
+DELIMITER ;
+
+CALL getPaymentsbyID(2);
+
+5.
+
+DELIMITER //
+CREATE procedure getCustomerbyCity(in user_City varchar(25)) 
+BEGIN
+    SELECT  CustomerID,Name
+    FROM Customers
+    WHERE City = user_City;
+END //
+DELIMITER ;
+
+CALL getCustomerbyCity('Gampha');
+
+6.
+
+DELIMITER //
+CREATE procedure getPdetailsPriceAbove(in user_Price double) 
+BEGIN
+    SELECT *
+    FROM Products
+    WHERE Price >= user_Price;
+END //
+DELIMITER ;
+
+CALL getPdetailsPriceAbove(7000);
+
+7.
+
