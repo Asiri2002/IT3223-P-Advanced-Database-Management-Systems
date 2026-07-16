@@ -1,0 +1,263 @@
+mysql> create database triggers_WS;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use triggers_WS;
+Database changed
+mysql> CREATE TABLE emp_work_hours(
+    ->  name varchar(45) NOT NULL,
+    ->  occupation varchar(35) NOT NULL,
+    ->  working_date date,
+    ->  working_hours varchar(10)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO emp_work_hours VALUES
+    -> ('Robin', 'Scientist', '2020-10-04', 12),
+    -> ('Warner', 'Engineer', '2020-10-04', 10),
+    -> ('Peter', 'Actor', '2020-10-04', 13),
+    -> ('Marco', 'Doctor', '2020-10-04', 14),
+    -> ('Brayden', 'Teacher', '2020-10-04', 12),
+    -> ('Antonio', 'Business', '2020-10-04', 11);
+Query OK, 6 rows affected (0.06 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from emp_work_hours;
++---------+------------+--------------+---------------+
+| name    | occupation | working_date | working_hours |
++---------+------------+--------------+---------------+
+| Robin   | Scientist  | 2020-10-04   | 12            |
+| Warner  | Engineer   | 2020-10-04   | 10            |
+| Peter   | Actor      | 2020-10-04   | 13            |
+| Marco   | Doctor     | 2020-10-04   | 14            |
+| Brayden | Teacher    | 2020-10-04   | 12            |
+| Antonio | Business   | 2020-10-04   | 11            |
++---------+------------+--------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bi_no_negative_hours
+    -> BEFORE INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    -> IF NEW.working_hours < 0 THEN
+    -> SET NEW.working_hours = 0;
+    -> END IF;
+    -> END;//
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DELIMITER ; \
+mysql> INSERT INTO emp_work_hours VALUES
+    -> ('Markus', 'Former', '2020-10-08', 14);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO emp_work_hours VALUES
+    -> ('Alexander', 'Actor', '2020-10-012', -13);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> DELIMITER //
+mysql> Create Trigger before_insert_occupation
+    -> BEFORE INSERT ON emp_work_hours FOR EACH ROW
+    -> BEGIN
+    -> IF NEW.occupation = 'Scientist' THEN SET NEW.occupation =
+    -> 'Doctor';
+    -> END IF;
+    -> END //
+Query OK, 0 rows affected (0.01 sec)
+
+
+(1)
+1.
+mysql> CREATE TRIGGER bi_default_date
+    -> BEFORE INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.working_date IS NULL THEN
+    ->         SET NEW.working_date = CURDATE();
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+2.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bi_max_hours
+    -> BEFORE INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.working_hours > 16 THEN
+    ->         SET NEW.working_hours = 16;
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+3.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bi_default_occupation
+    -> BEFORE INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.occupation IS NULL THEN
+    ->         SET NEW.occupation = 'Unknown';
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+(2)
+1.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER ai_backup_insert
+    -> AFTER INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO emp_backup VALUES (
+    ->         NEW.name, NEW.occupation, NEW.working_date, NEW.working_hours
+    ->     );
+    -> END;//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+
+2.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER ai_occupation_log
+    -> AFTER INSERT ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO occupation_log VALUES (NEW.name, NEW.occupation);
+    -> END;//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+
+(3)
+1.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER au_log_update
+    -> AFTER UPDATE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO work_log(name, action)
+    ->     VALUES (NEW.name, 'Updated');
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+2.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER au_large_deviation
+    -> AFTER UPDATE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF ABS(NEW.working_hours - OLD.working_hours) > 5 THEN
+    ->         INSERT INTO alerts(message)
+    ->         VALUES ('Large deviation in working hours');
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DELIMITER ;
+
+3.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER au_occupation_change
+    -> AFTER UPDATE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF OLD.occupation <> NEW.occupation THEN
+    ->         INSERT INTO work_log(name, action)
+    ->         VALUES (NEW.name, 'Occupation changed');
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+
+(4)
+1.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bd_log_delete_attempt
+    -> BEFORE DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO delete_log(name, action)
+    ->     VALUES (OLD.name, 'Delete attempted');
+    -> END;//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+
+2.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bd_prevent_doctor_delete
+    -> BEFORE DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF OLD.occupation = 'Doctor' THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'Cannot delete Doctor records';
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+3.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER bd_validate_exists
+    -> BEFORE DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF OLD.name IS NULL THEN
+    ->         SIGNAL SQLSTATE '45000'
+    ->         SET MESSAGE_TEXT = 'Record does not exist';
+    ->     END IF;
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
+
+(5)
+1.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER ad_archive_delete
+    -> AFTER DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO emp_archive VALUES (
+    ->         OLD.name, OLD.occupation, OLD.working_date, OLD.working_hours
+    ->     );
+    -> END;//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+
+2.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER ad_delete_time
+    -> AFTER DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO delete_history
+    ->     VALUES (OLD.name, NOW());
+    -> END;//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+
+3.
+mysql> DELIMITER //
+mysql> CREATE TRIGGER ad_delete_alert
+    -> AFTER DELETE ON emp_work_hours
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     INSERT INTO alerts(message)
+    ->     VALUES ('A record has been deleted');
+    -> END;//
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER ;
