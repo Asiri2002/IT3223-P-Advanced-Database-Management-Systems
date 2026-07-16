@@ -1,0 +1,691 @@
+(a)
+mysql> CREATE USER '2021ICT7'@'localhost' IDENTIFIED BY 'password123';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT ALL PRIVILEGES
+    -> ON *.*
+    -> TO '2021ICT7'@'localhost';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.01 sec)
+
+(b) mysql> SHOW GRANTS FOR '2021ICT7'@'localhost';
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for 2021ICT7@localhost                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `2021ICT7`@`localhost`                                                                                                                                                                                                                                                                                                                                                                                     |
+| GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ABORT_EXEMPT,AUDIT_ADMIN,AUTHENTICATION_POLICY_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,FIREWALL_EXEMPT,FLUSH_OPTIMIZER_COSTS,FLUSH_STATUS,FLUSH_TABLES,FLUSH_USER_RESOURCES,GROUP_REPLICATION_ADMIN,GROUP_REPLICATION_STREAM,INNODB_REDO_LOG_ARCHIVE,INNODB_REDO_LOG_ENABLE,PASSWORDLESS_USER_ADMIN,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SENSITIVE_VARIABLES_OBSERVER,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SHOW_ROUTINE,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,TELEMETRY_LOG_ADMIN,XA_RECOVER_ADMIN ON *.* TO `2021ICT7`@`localhost` |
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.00 sec)
+
+(c) 
+mysql -u 2021ICT7 -p
+
+(d)
+mysql> CREATE DATABASE Human_Resources;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE Human_Resources;
+Database changed
+
+mysql> CREATE TABLE Location (
+    ->     Location_Id INT PRIMARY KEY,
+    ->     City VARCHAR(50) NOT NULL
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+
+mysql> CREATE TABLE Job_Details (
+    ->     Job_Id VARCHAR(20) PRIMARY KEY,
+    ->     Job_Title VARCHAR(100) NOT NULL,
+    ->     Min_Salary DECIMAL(10,2) NOT NULL CHECK (Min_Salary > 0),
+    ->     Max_Salary DECIMAL(10,2) NOT NULL CHECK (Max_Salary > 0)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+
+mysql> CREATE TABLE Department (
+    ->     Department_Id INT PRIMARY KEY,
+    ->     Department_name VARCHAR(100) NOT NULL,
+    ->     Manager_Id INT NOT NULL,
+    ->     Location_Id INT NOT NULL,
+    ->
+    ->     FOREIGN KEY (Location_Id)
+    ->     REFERENCES Location(Location_Id)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+
+mysql> CREATE TABLE Employee (
+    ->     Employee_Id INT PRIMARY KEY,
+    ->     First_name VARCHAR(50) NOT NULL,
+    ->     Last_name VARCHAR(50) NOT NULL,
+    ->     Email VARCHAR(100) NOT NULL,
+    ->     Hire_Date DATE,
+    ->     Salary DECIMAL(10,2) CHECK (Salary > 0),
+    ->     Job_Id VARCHAR(20),
+    ->     Department_Id INT,
+    ->
+    ->     FOREIGN KEY (Job_Id)
+    ->     REFERENCES Job_Details(Job_Id),
+    ->
+    ->     FOREIGN KEY (Department_Id)
+    ->     REFERENCES Department(Department_Id)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+
+mysql> INSERT INTO Location VALUES
+    -> (1000,'Colombo'),
+    -> (1100,'Vavuniya'),
+    -> (1200,'Anuradhapura'),
+    -> (1300,'Kandy'),
+    -> (1400,'Jaffna');
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Location;
++-------------+--------------+
+| Location_Id | City         |
++-------------+--------------+
+|        1000 | Colombo      |
+|        1100 | Vavuniya     |
+|        1200 | Anuradhapura |
+|        1300 | Kandy        |
+|        1400 | Jaffna       |
++-------------+--------------+
+5 rows in set (0.00 sec)
+
+
+mysql> INSERT INTO Department VALUES
+    -> (10,'Administration',110,1000),
+    -> (20,'Marketing',108,1100),
+    -> (30,'Purchasing',114,1100),
+    -> (40,'HumanResources',103,1000),
+    -> (50,'Shipping',121,1000),
+    -> (60,'IT',106,1400),
+    -> (70,'PublicRelations',125,1300),
+    -> (80,'Sales',115,1200),
+    -> (90,'Executive',100,1300),
+    -> (100,'Finance',117,1000),
+    -> (110,'Accounting',120,1000);
+Query OK, 11 rows affected (0.00 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+mysql> select * from Department;
++---------------+-----------------+------------+-------------+
+| Department_Id | Department_name | Manager_Id | Location_Id |
++---------------+-----------------+------------+-------------+
+|            10 | Administration  |        110 |        1000 |
+|            20 | Marketing       |        108 |        1100 |
+|            30 | Purchasing      |        114 |        1100 |
+|            40 | HumanResources  |        103 |        1000 |
+|            50 | Shipping        |        121 |        1000 |
+|            60 | IT              |        106 |        1400 |
+|            70 | PublicRelations |        125 |        1300 |
+|            80 | Sales           |        115 |        1200 |
+|            90 | Executive       |        100 |        1300 |
+|           100 | Finance         |        117 |        1000 |
+|           110 | Accounting      |        120 |        1000 |
++---------------+-----------------+------------+-------------+
+11 rows in set (0.00 sec)
+
+
+
+mysql> INSERT INTO Job_Details VALUES
+    -> ('AC_ACCOUNT','Public Accountant',4200,9000),
+    -> ('AC_MGR','AccountingManager',8200,16000),
+    -> ('AD_ASST','Administration Assistant',3000,6000),
+    -> ('AD_PRES','President',20000,40000),
+    -> ('AD_VP','Administration Vice President',15000,30000),
+    -> ('FI_ACCOUNT','Accountant',4200,9000),
+    -> ('FI_MGR','FinanceManager',8200,16000),
+    -> ('HR_REP','HumanResources Representative',4000,9000),
+    -> ('IT_PROG','Programmer',4000,10000),
+    -> ('MK_MAN','MarketingManager',9000,15000),
+    -> ('MK_REP','MarketingRepresentative',4000,9000),
+    -> ('PR_REP','PublicRelations Representative',4500,10500),
+    -> ('PU_CLERK','Purchasing Clerk',2500,5500),
+    -> ('PU_MAN','PurchasingManager',8000,15000),
+    -> ('SA_MAN','SalesManager',10000,20000),
+    -> ('SA_REP','SalesRepresentative',6000,12000),
+    -> ('SH_CLERK','Shipping Clerk',2500,5500),
+    -> ('ST_CLERK','StockClerk',2000,5000),
+    -> ('ST_MAN','StockManager',5500,8500);
+Query OK, 19 rows affected (0.00 sec)
+Records: 19  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> select * from Job_Details;
++------------+--------------------------------+------------+------------+
+| Job_Id     | Job_Title                      | Min_Salary | Max_Salary |
++------------+--------------------------------+------------+------------+
+| AC_ACCOUNT | Public Accountant              |    4200.00 |    9000.00 |
+| AC_MGR     | AccountingManager              |    8200.00 |   16000.00 |
+| AD_ASST    | Administration Assistant       |    3000.00 |    6000.00 |
+| AD_PRES    | President                      |   20000.00 |   40000.00 |
+| AD_VP      | Administration Vice President  |   15000.00 |   30000.00 |
+| FI_ACCOUNT | Accountant                     |    4200.00 |    9000.00 |
+| FI_MGR     | FinanceManager                 |    8200.00 |   16000.00 |
+| HR_REP     | HumanResources Representative  |    4000.00 |    9000.00 |
+| IT_PROG    | Programmer                     |    4000.00 |   10000.00 |
+| MK_MAN     | MarketingManager               |    9000.00 |   15000.00 |
+| MK_REP     | MarketingRepresentative        |    4000.00 |    9000.00 |
+| PR_REP     | PublicRelations Representative |    4500.00 |   10500.00 |
+| PU_CLERK   | Purchasing Clerk               |    2500.00 |    5500.00 |
+| PU_MAN     | PurchasingManager              |    8000.00 |   15000.00 |
+| SA_MAN     | SalesManager                   |   10000.00 |   20000.00 |
+| SA_REP     | SalesRepresentative            |    6000.00 |   12000.00 |
+| SH_CLERK   | Shipping Clerk                 |    2500.00 |    5500.00 |
+| ST_CLERK   | StockClerk                     |    2000.00 |    5000.00 |
+| ST_MAN     | StockManager                   |    5500.00 |    8500.00 |
++------------+--------------------------------+------------+------------+
+19 rows in set (0.00 sec)
+
+
+mysql> INSERT INTO Employee VALUES
+    -> (100,'Steven','Rajan','srajan@gmail.com','2003-06-17',6000,'AD_ASST',90),
+    -> (101,'Neena','Mathan','nmathan@gmail.com','2005-09-21',17000,'SA_REP',80),
+    -> (102,'Luxi','Kaanthan','lkanthan@gmail.com','2001-01-13',17000,'MK_REP',20),
+    -> (103,'Alex','Ronald','aronald@gmail.com','2006-01-03',9000,'HR_REP',40),
+    -> (104,'Bavan','Kathirvel','bkathirvel@gmail.com','2007-05-21',6000,'PR_REP',70),
+    -> (105,'David','Austin','daustin@gmail.com','2005-06-25',4800,'FI_ACCOUNT',100),
+    -> (106,'Valli','Bala','vbala@gmail.com','2006-02-05',4800,'IT_PROG',60),
+    -> (107,'Diana','Lawrence','dlawrence@gmail.com','2007-02-07',4200,'AC_ACCOUNT',110),
+    -> (108,'Nancy','Desman','ndesman@gmail.com','2002-08-17',12000,'MK_MAN',20),
+    -> (109,'Daniel','Faviet','dfaviet@gmail.com','2002-08-16',9000,'FI_ACCOUNT',100),
+    -> (110,'John','Shekaan','jshekaan@gmail.com','2005-09-28',30000,'AD_PRES',10),
+    -> (111,'Ismael','Mohamed','imohamed@gmail.com','2005-09-30',6000,'AD_ASST',90),
+    -> (112,'Jose','Urman','jurman@gmail.com','2006-03-07',7800,'HR_REP',40),
+    -> (113,'Kamal','Maniyam','kmaniyam@gmail.com','2007-12-07',6900,'IT_PROG',60),
+    -> (114,'Gihan','Perera','gperera@gmail.com','2002-12-07',11000,'PU_MAN',30),
+    -> (115,'Akilan','Thaas','athass@gmail.com','2003-05-18',15000,'SA_MAN',80),
+    -> (116,'Shelli','Baida','sbaida@gmail.com','2005-12-24',3000,'PU_CLERK',30),
+    -> (117,'Swetha','Mohan','smohan@gmail.com','2005-07-24',9000,'FI_MGR',100),
+    -> (118,'Gowri','Balan','gbalan@gmail.com','2006-11-15',6000,'AD_ASST',10),
+    -> (119,'Karan','Kathir','kkathir@gmail.com','2007-08-10',4000,'MK_REP',20),
+    -> (120,'Bandara','Kumara','bkumara@gmail.com','2004-07-18',10000,'AC_MGR',110),
+    -> (121,'Adam','Fripp','afripp@gmail.com','2005-04-10',5000,'SH_CLERK',50),
+    -> (122,'Pathma','Maaran','pmaaran@gmail.com','2003-05-01',7900,'SA_REP',80),
+    -> (123,'Shanth','Velu','svelu@gmail.com','2005-10-10',6500,'AC_ACCOUNT',110),
+    -> (124,'Kevin','Mathu','kmathu@gmail.com','2007-11-16',5000,'SH_CLERK',50),
+    -> (125,'Julia','Nayer','jnayar@gmail.com','2005-07-16',4500,'PR_REP',70);
+Query OK, 26 rows affected (0.01 sec)
+Records: 26  Duplicates: 0  Warnings: 0
+
+mysql> select * from Employee;
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+| Employee_Id | First_name | Last_name | Email                | Hire_Date  | Salary   | Job_Id     | Department_Id |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+|         100 | Steven     | Rajan     | srajan@gmail.com     | 2003-06-17 |  6000.00 | AD_ASST    |            90 |
+|         101 | Neena      | Mathan    | nmathan@gmail.com    | 2005-09-21 | 17000.00 | SA_REP     |            80 |
+|         102 | Luxi       | Kaanthan  | lkanthan@gmail.com   | 2001-01-13 | 17000.00 | MK_REP     |            20 |
+|         103 | Alex       | Ronald    | aronald@gmail.com    | 2006-01-03 |  9000.00 | HR_REP     |            40 |
+|         104 | Bavan      | Kathirvel | bkathirvel@gmail.com | 2007-05-21 |  6000.00 | PR_REP     |            70 |
+|         105 | David      | Austin    | daustin@gmail.com    | 2005-06-25 |  4800.00 | FI_ACCOUNT |           100 |
+|         106 | Valli      | Bala      | vbala@gmail.com      | 2006-02-05 |  4800.00 | IT_PROG    |            60 |
+|         107 | Diana      | Lawrence  | dlawrence@gmail.com  | 2007-02-07 |  4200.00 | AC_ACCOUNT |           110 |
+|         108 | Nancy      | Desman    | ndesman@gmail.com    | 2002-08-17 | 12000.00 | MK_MAN     |            20 |
+|         109 | Daniel     | Faviet    | dfaviet@gmail.com    | 2002-08-16 |  9000.00 | FI_ACCOUNT |           100 |
+|         110 | John       | Shekaan   | jshekaan@gmail.com   | 2005-09-28 | 30000.00 | AD_PRES    |            10 |
+|         111 | Ismael     | Mohamed   | imohamed@gmail.com   | 2005-09-30 |  6000.00 | AD_ASST    |            90 |
+|         112 | Jose       | Urman     | jurman@gmail.com     | 2006-03-07 |  7800.00 | HR_REP     |            40 |
+|         113 | Kamal      | Maniyam   | kmaniyam@gmail.com   | 2007-12-07 |  6900.00 | IT_PROG    |            60 |
+|         114 | Gihan      | Perera    | gperera@gmail.com    | 2002-12-07 | 11000.00 | PU_MAN     |            30 |
+|         115 | Akilan     | Thaas     | athass@gmail.com     | 2003-05-18 | 15000.00 | SA_MAN     |            80 |
+|         116 | Shelli     | Baida     | sbaida@gmail.com     | 2005-12-24 |  3000.00 | PU_CLERK   |            30 |
+|         117 | Swetha     | Mohan     | smohan@gmail.com     | 2005-07-24 |  9000.00 | FI_MGR     |           100 |
+|         118 | Gowri      | Balan     | gbalan@gmail.com     | 2006-11-15 |  6000.00 | AD_ASST    |            10 |
+|         119 | Karan      | Kathir    | kkathir@gmail.com    | 2007-08-10 |  4000.00 | MK_REP     |            20 |
+|         120 | Bandara    | Kumara    | bkumara@gmail.com    | 2004-07-18 | 10000.00 | AC_MGR     |           110 |
+|         121 | Adam       | Fripp     | afripp@gmail.com     | 2005-04-10 |  5000.00 | SH_CLERK   |            50 |
+|         122 | Pathma     | Maaran    | pmaaran@gmail.com    | 2003-05-01 |  7900.00 | SA_REP     |            80 |
+|         123 | Shanth     | Velu      | svelu@gmail.com      | 2005-10-10 |  6500.00 | AC_ACCOUNT |           110 |
+|         124 | Kevin      | Mathu     | kmathu@gmail.com     | 2007-11-16 |  5000.00 | SH_CLERK   |            50 |
+|         125 | Julia      | Nayer     | jnayar@gmail.com     | 2005-07-16 |  4500.00 | PR_REP     |            70 |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+26 rows in set (0.00 sec)
+
+
+(e) /* i */
+
+mysql> CREATE VIEW Employee_Department_View AS
+    -> SELECT
+    ->     e.First_name,
+    ->     e.Last_name,
+    ->     d.Department_Id,
+    ->     d.Department_name
+    -> FROM Employee e
+    -> JOIN Department d
+    -> ON e.Department_Id = d.Department_Id
+    -> WHERE d.Department_Id IN (80,40);
+Query OK, 0 rows affected (0.01 sec)
+
+
+/* ii */
+
+mysql> CREATE VIEW Salary_Exceed_View AS
+    -> SELECT
+    ->     e.First_name,
+    ->     e.Last_name,
+    ->     j.Min_Salary,
+    ->     j.Max_Salary,
+    ->     e.Salary
+    -> FROM Employee e
+    -> JOIN Job_Details j
+    -> ON e.Job_Id = j.Job_Id
+    -> WHERE e.Salary > j.Max_Salary;
+Query OK, 0 rows affected (0.01 sec)
+
+/* iii */
+
+mysql>  CREATE VIEW Employee_City_View AS
+    -> SELECT
+    ->     e.First_name,
+    ->     e.Last_name,
+    ->     d.Department_name,
+    ->     l.City
+    -> FROM Employee e
+    -> JOIN Department d
+    -> ON e.Department_Id = d.Department_Id
+    -> JOIN Location l
+    -> ON d.Location_Id = l.Location_Id
+    -> WHERE e.First_name LIKE '%d%';
+Query OK, 0 rows affected (0.01 sec)
+
+
+(f) 
+/* i */
+
+mysql> CREATE INDEX idx_employee_name
+    -> ON Employee(First_name, Last_name);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+/* ii */
+
+mysql> CREATE INDEX idx_department
+    -> ON Employee(Department_Id);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+/* iii */
+
+mysql> SELECT
+    ->     TABLE_SCHEMA,
+    ->     TABLE_NAME,
+    ->     INDEX_NAME,
+    ->     COLUMN_NAME
+    -> FROM INFORMATION_SCHEMA.STATISTICS
+    -> WHERE TABLE_SCHEMA='Human_Resource';
++----------------+-------------+--------------------+---------------+
+| TABLE_SCHEMA   | TABLE_NAME  | INDEX_NAME         | COLUMN_NAME   |
++----------------+-------------+--------------------+---------------+
+| human_resource | location    | PRIMARY            | Location_ID   |
+| human_resource | department  | PRIMARY            | Department_Id |
+| human_resource | department  | Location_Id        | Location_Id   |
+| human_resource | job_details | PRIMARY            | Job_Id        |
+| human_resource | job_details | idx_job_title_max  | Job_Title     |
+| human_resource | job_details | idx_job_title_max  | Max_Salary    |
+| human_resource | employee    | PRIMARY            | Employee_Id   |
+| human_resource | employee    | Job_Id             | Job_Id        |
+| human_resource | employee    | idx_emp_names      | First_name    |
+| human_resource | employee    | idx_emp_names      | Last_name     |
+| human_resource | employee    | idx_emp_dept_id    | Department_Id |
+| human_resource | employee    | idx_emp_name_email | First_name    |
+| human_resource | employee    | idx_emp_name_email | Email         |
++----------------+-------------+--------------------+---------------+
+13 rows in set (0.04 sec)
+
+
+(g) 
+/* i */
+
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE PROCEDURE Show_Table(IN table_name VARCHAR(50))
+    -> BEGIN
+    ->     SET @q = CONCAT('SELECT * FROM ', table_name);
+    ->     PREPARE stmt FROM @q;
+    ->     EXECUTE stmt;
+    ->     DEALLOCATE PREPARE stmt;
+    -> END $$
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER ;
+
+
+mysql> CALL Show_Table('Location');
++-------------+--------------+
+| Location_Id | City         |
++-------------+--------------+
+|        1000 | Colombo      |
+|        1100 | Vavuniya     |
+|        1200 | Anuradhapura |
+|        1300 | Kandy        |
+|        1400 | Jaffna       |
++-------------+--------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL Show_Table('Department');
++---------------+-----------------+------------+-------------+
+| Department_Id | Department_name | Manager_Id | Location_Id |
++---------------+-----------------+------------+-------------+
+|            10 | Administration  |        110 |        1000 |
+|            20 | Marketing       |        108 |        1100 |
+|            30 | Purchasing      |        114 |        1100 |
+|            40 | HumanResources  |        103 |        1000 |
+|            50 | Shipping        |        121 |        1000 |
+|            60 | IT              |        106 |        1400 |
+|            70 | PublicRelations |        125 |        1300 |
+|            80 | Sales           |        115 |        1200 |
+|            90 | Executive       |        100 |        1300 |
+|           100 | Finance         |        117 |        1000 |
+|           110 | Accounting      |        120 |        1000 |
++---------------+-----------------+------------+-------------+
+11 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CALL Show_Table('Job_Details');
++------------+--------------------------------+------------+------------+
+| Job_Id     | Job_Title                      | Min_Salary | Max_Salary |
++------------+--------------------------------+------------+------------+
+| AC_ACCOUNT | Public Accountant              |    4200.00 |    9000.00 |
+| AC_MGR     | AccountingManager              |    8200.00 |   16000.00 |
+| AD_ASST    | Administration Assistant       |    3000.00 |    6000.00 |
+| AD_PRES    | President                      |   20000.00 |   40000.00 |
+| AD_VP      | Administration Vice President  |   15000.00 |   30000.00 |
+| FI_ACCOUNT | Accountant                     |    4200.00 |    9000.00 |
+| FI_MGR     | FinanceManager                 |    8200.00 |   16000.00 |
+| HR_REP     | HumanResources Representative  |    4000.00 |    9000.00 |
+| IT_PROG    | Programmer                     |    4000.00 |   10000.00 |
+| MK_MAN     | MarketingManager               |    9000.00 |   15000.00 |
+| MK_REP     | MarketingRepresentative        |    4000.00 |    9000.00 |
+| PR_REP     | PublicRelations Representative |    4500.00 |   10500.00 |
+| PU_CLERK   | Purchasing Clerk               |    2500.00 |    5500.00 |
+| PU_MAN     | PurchasingManager              |    8000.00 |   15000.00 |
+| SA_MAN     | SalesManager                   |   10000.00 |   20000.00 |
+| SA_REP     | SalesRepresentative            |    6000.00 |   12000.00 |
+| SH_CLERK   | Shipping Clerk                 |    2500.00 |    5500.00 |
+| ST_CLERK   | StockClerk                     |    2000.00 |    5000.00 |
+| ST_MAN     | StockManager                   |    5500.00 |    8500.00 |
++------------+--------------------------------+------------+------------+
+19 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> CALL Show_Table('Employee');
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+| Employee_Id | First_name | Last_name | Email                | Hire_Date  | Salary   | Job_Id     | Department_Id |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+|         100 | Steven     | Rajan     | srajan@gmail.com     | 2003-06-17 |  6000.00 | AD_ASST    |            90 |
+|         101 | Neena      | Mathan    | nmathan@gmail.com    | 2005-09-21 | 17000.00 | SA_REP     |            80 |
+|         102 | Luxi       | Kaanthan  | lkanthan@gmail.com   | 2001-01-13 | 17000.00 | MK_REP     |            20 |
+|         103 | Alex       | Ronald    | aronald@gmail.com    | 2006-01-03 |  9000.00 | HR_REP     |            40 |
+|         104 | Bavan      | Kathirvel | bkathirvel@gmail.com | 2007-05-21 |  6000.00 | PR_REP     |            70 |
+|         105 | David      | Austin    | daustin@gmail.com    | 2005-06-25 |  4800.00 | FI_ACCOUNT |           100 |
+|         106 | Valli      | Bala      | vbala@gmail.com      | 2006-02-05 |  4800.00 | IT_PROG    |            60 |
+|         107 | Diana      | Lawrence  | dlawrence@gmail.com  | 2007-02-07 |  4200.00 | AC_ACCOUNT |           110 |
+|         108 | Nancy      | Desman    | ndesman@gmail.com    | 2002-08-17 | 12000.00 | MK_MAN     |            20 |
+|         109 | Daniel     | Faviet    | dfaviet@gmail.com    | 2002-08-16 |  9000.00 | FI_ACCOUNT |           100 |
+|         110 | John       | Shekaan   | jshekaan@gmail.com   | 2005-09-28 | 30000.00 | AD_PRES    |            10 |
+|         111 | Ismael     | Mohamed   | imohamed@gmail.com   | 2005-09-30 |  6000.00 | AD_ASST    |            90 |
+|         112 | Jose       | Urman     | jurman@gmail.com     | 2006-03-07 |  7800.00 | HR_REP     |            40 |
+|         113 | Kamal      | Maniyam   | kmaniyam@gmail.com   | 2007-12-07 |  6900.00 | IT_PROG    |            60 |
+|         114 | Gihan      | Perera    | gperera@gmail.com    | 2002-12-07 | 11000.00 | PU_MAN     |            30 |
+|         115 | Akilan     | Thaas     | athass@gmail.com     | 2003-05-18 | 15000.00 | SA_MAN     |            80 |
+|         116 | Shelli     | Baida     | sbaida@gmail.com     | 2005-12-24 |  3000.00 | PU_CLERK   |            30 |
+|         117 | Swetha     | Mohan     | smohan@gmail.com     | 2005-07-24 |  9000.00 | FI_MGR     |           100 |
+|         118 | Gowri      | Balan     | gbalan@gmail.com     | 2006-11-15 |  6000.00 | AD_ASST    |            10 |
+|         119 | Karan      | Kathir    | kkathir@gmail.com    | 2007-08-10 |  4000.00 | MK_REP     |            20 |
+|         120 | Bandara    | Kumara    | bkumara@gmail.com    | 2004-07-18 | 10000.00 | AC_MGR     |           110 |
+|         121 | Adam       | Fripp     | afripp@gmail.com     | 2005-04-10 |  5000.00 | SH_CLERK   |            50 |
+|         122 | Pathma     | Maaran    | pmaaran@gmail.com    | 2003-05-01 |  7900.00 | SA_REP     |            80 |
+|         123 | Shanth     | Velu      | svelu@gmail.com      | 2005-10-10 |  6500.00 | AC_ACCOUNT |           110 |
+|         124 | Kevin      | Mathu     | kmathu@gmail.com     | 2007-11-16 |  5000.00 | SH_CLERK   |            50 |
+|         125 | Julia      | Nayer     | jnayar@gmail.com     | 2005-07-16 |  4500.00 | PR_REP     |            70 |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+26 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.07 sec)
+
+
+ii. 
+
+mysql> CREATE PROCEDURE Total_Salary(OUT total DECIMAL(15,2))
+    -> BEGIN
+    ->     SELECT SUM(Salary)
+    ->     INTO total
+    ->     FROM Employee;
+    -> END $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> CALL Total_Salary(@totalsalary);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>
+mysql> SELECT @totalsalary;
++--------------+
+| @totalsalary |
++--------------+
+|    227400.00 |
++--------------+
+1 row in set (0.01 sec)
+
+
+iii.
+
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE PROCEDURE Employee_details(IN empid INT)
+    -> BEGIN
+    ->     SELECT
+    ->         e.First_name,
+    ->         e.Last_name,
+    ->         e.Email,
+    ->         e.Hire_Date,
+    ->         e.Salary,
+    ->         j.Job_Title
+    ->     FROM Employee e
+    ->     JOIN Job_Details j
+    ->     ON e.Job_Id = j.Job_Id
+    ->     WHERE e.Employee_Id = empid;
+    -> END $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> CALL Employee_details(106);
++------------+-----------+-----------------+------------+---------+------------+
+| First_name | Last_name | Email           | Hire_Date  | Salary  | Job_Title  |
++------------+-----------+-----------------+------------+---------+------------+
+| Valli      | Bala      | vbala@gmail.com | 2006-02-05 | 4800.00 | Programmer |
++------------+-----------+-----------------+------------+---------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+(h) TRIGGERS
+i. 
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE TRIGGER trg_salary_check
+    -> BEFORE INSERT ON Employee
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     DECLARE minsal DECIMAL(10,2);
+    ->     DECLARE maxsal DECIMAL(10,2);
+    ->
+    ->     SELECT Min_Salary, Max_Salary
+    ->     INTO minsal, maxsal
+    ->     FROM Job_Details
+    ->     WHERE Job_Id = NEW.Job_Id;
+    ->
+    ->     IF NEW.Salary < minsal OR NEW.Salary > maxsal THEN
+    ->         SET NEW.Salary = maxsal;
+    ->     END IF;
+    -> END $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql>
+mysql> INSERT INTO Employee VALUES
+    -> (126,'Rathi','Raman','rraman@gmail.com',
+    -> '2003-07-17',5000,'AD_ASST',90);
+Query OK, 1 row affected (0.01 sec)
+
+mysql>
+mysql> INSERT INTO Employee VALUES
+    -> (127,'Meena','Mathis','mmathis@gmail.com',
+    -> '2005-10-21',17000,'SA_REP',80);
+Query OK, 1 row affected (0.01 sec)
+
+SELECT * FROM Employee;
+mysql> SELECT * FROM Employee;
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+| Employee_Id | First_name | Last_name | Email                | Hire_Date  | Salary   | Job_Id     | Department_Id |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+|         100 | Steven     | Rajan     | srajan@gmail.com     | 2003-06-17 |  6000.00 | AD_ASST    |            90 |
+|         101 | Neena      | Mathan    | nmathan@gmail.com    | 2005-09-21 | 17000.00 | SA_REP     |            80 |
+|         102 | Luxi       | Kaanthan  | lkanthan@gmail.com   | 2001-01-13 | 17000.00 | MK_REP     |            20 |
+|         103 | Alex       | Ronald    | aronald@gmail.com    | 2006-01-03 |  9000.00 | HR_REP     |            40 |
+|         104 | Bavan      | Kathirvel | bkathirvel@gmail.com | 2007-05-21 |  6000.00 | PR_REP     |            70 |
+|         105 | David      | Austin    | daustin@gmail.com    | 2005-06-25 |  4800.00 | FI_ACCOUNT |           100 |
+|         106 | Valli      | Bala      | vbala@gmail.com      | 2006-02-05 |  4800.00 | IT_PROG    |            60 |
+|         107 | Diana      | Lawrence  | dlawrence@gmail.com  | 2007-02-07 |  4200.00 | AC_ACCOUNT |           110 |
+|         108 | Nancy      | Desman    | ndesman@gmail.com    | 2002-08-17 | 12000.00 | MK_MAN     |            20 |
+|         109 | Daniel     | Faviet    | dfaviet@gmail.com    | 2002-08-16 |  9000.00 | FI_ACCOUNT |           100 |
+|         110 | John       | Shekaan   | jshekaan@gmail.com   | 2005-09-28 | 30000.00 | AD_PRES    |            10 |
+|         111 | Ismael     | Mohamed   | imohamed@gmail.com   | 2005-09-30 |  6000.00 | AD_ASST    |            90 |
+|         112 | Jose       | Urman     | jurman@gmail.com     | 2006-03-07 |  7800.00 | HR_REP     |            40 |
+|         113 | Kamal      | Maniyam   | kmaniyam@gmail.com   | 2007-12-07 |  6900.00 | IT_PROG    |            60 |
+|         114 | Gihan      | Perera    | gperera@gmail.com    | 2002-12-07 | 11000.00 | PU_MAN     |            30 |
+|         115 | Akilan     | Thaas     | athass@gmail.com     | 2003-05-18 | 15000.00 | SA_MAN     |            80 |
+|         116 | Shelli     | Baida     | sbaida@gmail.com     | 2005-12-24 |  3000.00 | PU_CLERK   |            30 |
+|         117 | Swetha     | Mohan     | smohan@gmail.com     | 2005-07-24 |  9000.00 | FI_MGR     |           100 |
+|         118 | Gowri      | Balan     | gbalan@gmail.com     | 2006-11-15 |  6000.00 | AD_ASST    |            10 |
+|         119 | Karan      | Kathir    | kkathir@gmail.com    | 2007-08-10 |  4000.00 | MK_REP     |            20 |
+|         120 | Bandara    | Kumara    | bkumara@gmail.com    | 2004-07-18 | 10000.00 | AC_MGR     |           110 |
+|         121 | Adam       | Fripp     | afripp@gmail.com     | 2005-04-10 |  5000.00 | SH_CLERK   |            50 |
+|         122 | Pathma     | Maaran    | pmaaran@gmail.com    | 2003-05-01 |  7900.00 | SA_REP     |            80 |
+|         123 | Shanth     | Velu      | svelu@gmail.com      | 2005-10-10 |  6500.00 | AC_ACCOUNT |           110 |
+|         124 | Kevin      | Mathu     | kmathu@gmail.com     | 2007-11-16 |  5000.00 | SH_CLERK   |            50 |
+|         125 | Julia      | Nayer     | jnayar@gmail.com     | 2005-07-16 |  4500.00 | PR_REP     |            70 |
+|         126 | Rathi      | Raman     | rraman@gmail.com     | 2003-07-17 |  5000.00 | AD_ASST    |            90 |
+|         127 | Meena      | Mathis    | mmathis@gmail.com    | 2005-10-21 | 12000.00 | SA_REP     |            80 |
++-------------+------------+-----------+----------------------+------------+----------+------------+---------------+
+28 rows in set (0.00 sec)
+
+
+ii. COMMISSION TRIGGER
+mysql> CREATE TABLE Commission (
+    ->     Employee_Id INT,
+    ->     Commission_Amount DECIMAL(10,2)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE TRIGGER trg_commission
+    -> BEFORE UPDATE ON Employee
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF OLD.Salary > 10000 THEN
+    ->         INSERT INTO Commission
+    ->         VALUES(
+    ->             OLD.Employee_Id,
+    ->             OLD.Salary * 0.005
+    ->         );
+    ->     END IF;
+    -> END $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+(i) TRANSACTIONS
+i.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> SELECT *
+    -> FROM Employee
+    -> WHERE Job_Id='IT_PROG';
++-------------+------------+-----------+--------------------+------------+---------+---------+---------------+
+| Employee_Id | First_name | Last_name | Email              | Hire_Date  | Salary  | Job_Id  | Department_Id |
++-------------+------------+-----------+--------------------+------------+---------+---------+---------------+
+|         106 | Valli      | Bala      | vbala@gmail.com    | 2006-02-05 | 4800.00 | IT_PROG |            60 |
+|         113 | Kamal      | Maniyam   | kmaniyam@gmail.com | 2007-12-07 | 6900.00 | IT_PROG |            60 |
++-------------+------------+-----------+--------------------+------------+---------+---------+---------------+
+2 rows in set (0.06 sec)
+
+
+ii.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Employee
+    -> SET Salary = Salary + (Salary * 0.002);
+Query OK, 28 rows affected (0.02 sec)
+Rows matched: 28  Changed: 28  Warnings: 0
+
+mysql>
+mysql> SELECT * FROM Commission;
++-------------+-------------------+
+| Employee_Id | Commission_Amount |
++-------------+-------------------+
+|         101 |             85.00 |
+|         102 |             85.00 |
+|         108 |             60.00 |
+|         110 |            150.00 |
+|         114 |             55.00 |
+|         115 |             75.00 |
+|         127 |             60.00 |
++-------------+-------------------+
+7 rows in set (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+
+
+iii.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> SELECT
+    ->     e.First_name,
+    ->     e.Last_name,
+    ->     e.Email,
+    ->     d.Department_name
+    -> FROM Employee e
+    -> JOIN Department d
+    -> ON e.Employee_Id = d.Manager_Id;
++------------+-----------+--------------------+-----------------+
+| First_name | Last_name | Email              | Department_name |
++------------+-----------+--------------------+-----------------+
+| John       | Shekaan   | jshekaan@gmail.com | Administration  |
+| Nancy      | Desman    | ndesman@gmail.com  | Marketing       |
+| Gihan      | Perera    | gperera@gmail.com  | Purchasing      |
+| Alex       | Ronald    | aronald@gmail.com  | HumanResources  |
+| Adam       | Fripp     | afripp@gmail.com   | Shipping        |
+| Valli      | Bala      | vbala@gmail.com    | IT              |
+| Julia      | Nayer     | jnayar@gmail.com   | PublicRelations |
+| Akilan     | Thaas     | athass@gmail.com   | Sales           |
+| Steven     | Rajan     | srajan@gmail.com   | Executive       |
+| Swetha     | Mohan     | smohan@gmail.com   | Finance         |
+| Bandara    | Kumara    | bkumara@gmail.com  | Accounting      |
++------------+-----------+--------------------+-----------------+
+11 rows in set (0.00 sec)
