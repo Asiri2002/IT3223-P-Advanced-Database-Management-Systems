@@ -1,0 +1,137 @@
+1.
+MariaDB [mysql]> create user student6@localhost identified by '123456';
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [mysql]> select user, host, password from user;
++----------+-----------+-------------------------------------------+
+| User     | Host      | Password                                  |
++----------+-----------+-------------------------------------------+
+| root     | localhost |                                           |
+| student1 | localhost |                                           |
+| root     | 127.0.0.1 |                                           |
+| root     | ::1       |                                           |
+| pma      | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri    | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| student2 | localhost |                                           |
+| student3 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student4 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student5 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
++----------+-----------+-------------------------------------------+
+11 rows in set (0.001 sec)
+
+MariaDB [mysql]> update user set user='student5' where user='2021ict07';
+Query OK, 0 rows affected (0.001 sec)
+Rows matched: 0  Changed: 0  Warnings: 0
+
+2.
+MariaDB [mysql]> select user, host, password from user;\
++----------+-----------+-------------------------------------------+
+| User     | Host      | Password                                  |
++----------+-----------+-------------------------------------------+
+| root     | localhost |                                           |
+| student1 | localhost |                                           |
+| root     | 127.0.0.1 |                                           |
+| root     | ::1       |                                           |
+| pma      | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri    | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| student2 | localhost |                                           |
+| student3 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student4 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student5 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
++----------+-----------+-------------------------------------------+
+11 rows in set (0.001 sec)
+
+3.
+MariaDB [mysql]> update user set user='2021ict07' where user='student5';
+Query OK, 1 row affected (0.003 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+4.
+MariaDB [mysql]> select user, host, password from user;\
++-----------+-----------+-------------------------------------------+
+| User      | Host      | Password                                  |
++-----------+-----------+-------------------------------------------+
+| root      | localhost |                                           |
+| student1  | localhost |                                           |
+| root      | 127.0.0.1 |                                           |
+| root      | ::1       |                                           |
+| pma       | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri     | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| student2  | localhost |                                           |
+| student3  | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student4  | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| 2021ict07 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6  | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
++-----------+-----------+-------------------------------------------+
+11 rows in set (0.001 sec)
+
+5.
+MariaDB [mysql]> set password for 'student6'@localhost=password('20020105');
+Query OK, 0 rows affected (0.003 sec)
+
+6.
+MariaDB [mysql]> select user, host, password from user;
++-----------+-----------+-------------------------------------------+
+| User      | Host      | Password                                  |
++-----------+-----------+-------------------------------------------+
+| root      | localhost |                                           |
+| student1  | localhost |                                           |
+| root      | 127.0.0.1 |                                           |
+| root      | ::1       |                                           |
+| pma       | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri     | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| student2  | localhost |                                           |
+| student3  | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student4  | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| 2021ict07 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6  | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
++-----------+-----------+-------------------------------------------+
+11 rows in set (0.001 sec)
+
+MariaDB [mysql]> drop user student1@localhost;
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [mysql]> drop user student2@localhost;
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [mysql]> drop user student3@localhost;
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [mysql]> drop user student4@localhost;
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [mysql]> select user, host, password from user;
++-----------+-----------+-------------------------------------------+
+| User      | Host      | Password                                  |
++-----------+-----------+-------------------------------------------+
+| root      | localhost |                                           |
+| root      | 127.0.0.1 |                                           |
+| root      | ::1       |                                           |
+| pma       | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri     | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| 2021ict07 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6  | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
++-----------+-----------+-------------------------------------------+
+7 rows in set (0.001 sec)
+
+7.
+MariaDB [mysql]> update mysql.user set host='vau.ac.lk' where user='student6' and host='localhost';
+Query OK, 1 row affected (0.025 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+8.
+MariaDB [mysql]> select user, host, password from user;
++-----------+-----------+-------------------------------------------+
+| User      | Host      | Password                                  |
++-----------+-----------+-------------------------------------------+
+| root      | localhost |                                           |
+| root      | 127.0.0.1 |                                           |
+| root      | ::1       |                                           |
+| pma       | localhost | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
+| Asiri     | localhost | *19FA46C811AEC3414707B9F5BBC0732807628F08 |
+| 2021ict07 | localhost | *6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9 |
+| student6  | vau.ac.lk | *A4C4D132FC968B200454178C1C25AFA957B79F8E |
++-----------+-----------+-------------------------------------------+
+7 rows in set (0.001 sec)
