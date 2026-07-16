@@ -1,0 +1,112 @@
+show databases;
+use customer_db;
+show tables; 
+select * from customers;
+
+DROP PROCEDURE IF EXISTS GetCustomerInfo;
+
+DELIMITER // 
+CREATE PROCEDURE GetCustomerInfo(IN CustomerAge INT) 
+BEGIN 
+    SELECT * FROM customers WHERE AGE = CustomerAge; 
+END // 
+DELIMITER ;
+CALL GetCustomerInfo(25);  
+CALL GetCustomerInfo(32); 
+CALL GetCustomerInfo(27); 
+CALL GetCustomerInfo(20);
+
+DROP PROCEDURE IF EXISTS GetCustomerSalary;
+
+DELIMITER // 
+CREATE PROCEDURE GetCustomerSalary(IN CustomerID INT) 
+BEGIN 
+    SELECT SALARY FROM CUSTOMERS WHERE ID = CustomerID; 
+END // 
+DELIMITER ;
+CALL GetCustomerSalary(6); 
+CALL GetCustomerSalary(1);
+CALL GetCustomerSalary(2);
+CALL GetCustomerSalary(3);
+CALL GetCustomerSalary(10);
+SELECT * FROM customers;
+
+DROP PROCEDURE IF EXISTS GetNameAndAge;
+
+DELIMITER //
+CREATE PROCEDURE GetNameAndAge(IN cust_id INT)
+BEGIN
+    SELECT NAME, AGE 
+    FROM CUSTOMERS 
+    WHERE ID = cust_id;
+END //
+DELIMITER ;
+CALL GetNameAndAge(5);
+
+DROP PROCEDURE IF EXISTS GetAddressByName;
+
+DELIMITER //
+CREATE PROCEDURE GetAddressByName(IN cust_name VARCHAR(50))
+BEGIN
+    SELECT ADDRESS 
+    FROM CUSTOMERS 
+    WHERE NAME = cust_name;
+END //
+DELIMITER ;
+CALL GetAddressByName('Kathees');
+
+DROP PROCEDURE IF EXISTS GetNamesByAge;
+
+DELIMITER //
+CREATE PROCEDURE GetNamesByAge(IN cust_age INT)
+BEGIN
+    SELECT NAME 
+    FROM CUSTOMERS 
+    WHERE AGE = cust_age;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS GetAgeSalaryByName;
+
+DELIMITER //
+CREATE PROCEDURE GetAgeSalaryByName(IN cust_name VARCHAR(50))
+BEGIN
+    SELECT AGE, SALARY 
+    FROM CUSTOMERS 
+    WHERE NAME = cust_name;
+END //
+DELIMITER ;
+CALL GetAgeSalaryByName('Kathees');
+
+DROP PROCEDURE IF EXISTS GetCustomersByAgeRanges;
+
+DELIMITER //
+CREATE PROCEDURE GetCustomersByAgeRanges(IN min_age INT, IN max_age INT)
+BEGIN
+    SELECT * 
+    FROM CUSTOMERS 
+    WHERE AGE BETWEEN min_age AND max_age;
+END //
+DELIMITER ;
+CALL GetCustomersByAgeRanges(22, 30);
+
+DROP PROCEDURE IF EXISTS GetDetail;
+
+DELIMITER //
+CREATE PROCEDURE GetDetail(OUT total INT)
+BEGIN
+    SELECT COUNT(AGE) INTO total 
+    FROM CUSTOMERS 
+    WHERE AGE = 25;
+END //
+DELIMITER ;
+CALL GetDetail(@total);
+SELECT @total;
+
+DELIMITER //
+CREATE PROCEDURE GetMinSalary(OUT min_sal INT)
+BEGIN
+    SELECT MIN(SALARY) INTO min_sal FROM CUSTOMERS;
+END //
+DELIMITER ;
+
