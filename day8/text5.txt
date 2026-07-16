@@ -1,0 +1,512 @@
+a.
+mysql> use bank;
+Database changed
+mysql> create table Customers(
+    -> CustomerID int primary key,
+    -> Name varchar(20),
+    -> City varchar(20));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc Customers;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| CustomerID | int         | NO   | PRI | NULL    |       |
+| Name       | varchar(20) | YES  |     | NULL    |       |
+| City       | varchar(20) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+3 rows in set (0.05 sec)
+
+mysql> create table Branches(
+    -> BranchID;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 2
+mysql> CREATE TABLE Branches (
+    ->     BranchID INT PRIMARY KEY,
+    ->     BranchName VARCHAR(50),
+    ->     Location VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TABLE Accounts (
+    ->     AccountID INT PRIMARY KEY,
+    ->     CustomerID INT,
+    ->     BranchID INT,
+    ->     Balance DECIMAL(10,2),
+    ->     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    ->     FOREIGN KEY (BranchID) REFERENCES Branches(BranchID)
+    -> ) ENGINE=InnoDB;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc Branches;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| BranchID   | int         | NO   | PRI | NULL    |       |
+| BranchName | varchar(50) | YES  |     | NULL    |       |
+| Location   | varchar(50) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc Accounts;
++------------+---------------+------+-----+---------+-------+
+| Field      | Type          | Null | Key | Default | Extra |
++------------+---------------+------+-----+---------+-------+
+| AccountID  | int           | NO   | PRI | NULL    |       |
+| CustomerID | int           | YES  | MUL | NULL    |       |
+| BranchID   | int           | YES  | MUL | NULL    |       |
+| Balance    | decimal(10,2) | YES  |     | NULL    |       |
++------------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> INSERT INTO Customers VALUES
+    -> (1, 'Alice', 'Colombo'),
+    -> (2, 'Bob', 'Kandy'),
+    -> (3, 'Charlie', 'Galle'),
+    -> (4, 'David', 'Jaffna'),
+    -> (5, 'Eva', 'Negombo'),
+    -> (6, 'Frank', 'Kurunegala'),
+    -> (7, 'Grace', 'Matara'),
+    -> (8, 'Hannah', 'Anuradhapura'),
+    -> (9, 'Ishan', 'Batticaloa'),
+    -> (10, 'Julia', 'Trincomalee'),
+    -> (11, 'Kevin', 'Ratnapura'),
+    -> (12, 'Lara', 'Badulla');
+Query OK, 12 rows affected (0.02 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Branches VALUES
+    -> (1, 'Main Branch', 'Colombo'),
+    -> (2, 'City Branch', 'Kandy'),
+    -> (3, 'Coastal Branch', 'Galle'),
+    -> (4, 'North Branch', 'Jaffna'),
+    -> (5, 'Airport Branch', 'Negombo'),
+    -> (6, 'Central Branch', 'Kurunegala'),
+    -> (7, 'South Branch', 'Matara'),
+    -> (8, 'Ancient Branch', 'Anuradhapura'),
+    -> (9, 'East Branch', 'Batticaloa'),
+    -> (10, 'Harbor Branch', 'Trincomalee'),
+    -> (11, 'Gem Branch', 'Ratnapura'),
+    -> (12, 'Hill Branch', 'Badulla');
+Query OK, 12 rows affected (0.00 sec)
+Records: 12  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Accounts VALUES
+    -> (101, 1, 1, 50000),
+    -> (102, 2, 2, 30000),
+    -> (103, 3, 3, 45000),
+    -> (104, 4, 4, 20000),
+    -> (105, 5, 5, 35000),
+    -> (106, 6, 6, 60000),
+    -> (107, 7, 7, 15000),
+    -> (108, 8, 8, 25000),
+    -> (109, 9, 9, 40000),
+    -> (110, 10, 10, 55000),
+    -> (111, 11, 11, 70000),
+    -> (112, 12, 12, 80000),
+    -> (113, 1, 2, 22000),
+    -> (114, 3, 1, 33000),
+    -> (115, 5, 3, 27000);
+Query OK, 15 rows affected (0.00 sec)
+Records: 15  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Customers;
++------------+---------+--------------+
+| CustomerID | Name    | City         |
++------------+---------+--------------+
+|          1 | Alice   | Colombo      |
+|          2 | Bob     | Kandy        |
+|          3 | Charlie | Galle        |
+|          4 | David   | Jaffna       |
+|          5 | Eva     | Negombo      |
+|          6 | Frank   | Kurunegala   |
+|          7 | Grace   | Matara       |
+|          8 | Hannah  | Anuradhapura |
+|          9 | Ishan   | Batticaloa   |
+|         10 | Julia   | Trincomalee  |
+|         11 | Kevin   | Ratnapura    |
+|         12 | Lara    | Badulla      |
++------------+---------+--------------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Branches;
++----------+----------------+--------------+
+| BranchID | BranchName     | Location     |
++----------+----------------+--------------+
+|        1 | Main Branch    | Colombo      |
+|        2 | City Branch    | Kandy        |
+|        3 | Coastal Branch | Galle        |
+|        4 | North Branch   | Jaffna       |
+|        5 | Airport Branch | Negombo      |
+|        6 | Central Branch | Kurunegala   |
+|        7 | South Branch   | Matara       |
+|        8 | Ancient Branch | Anuradhapura |
+|        9 | East Branch    | Batticaloa   |
+|       10 | Harbor Branch  | Trincomalee  |
+|       11 | Gem Branch     | Ratnapura    |
+|       12 | Hill Branch    | Badulla      |
++----------+----------------+--------------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Accounts;
++-----------+------------+----------+----------+
+| AccountID | CustomerID | BranchID | Balance  |
++-----------+------------+----------+----------+
+|       101 |          1 |        1 | 50000.00 |
+|       102 |          2 |        2 | 30000.00 |
+|       103 |          3 |        3 | 45000.00 |
+|       104 |          4 |        4 | 20000.00 |
+|       105 |          5 |        5 | 35000.00 |
+|       106 |          6 |        6 | 60000.00 |
+|       107 |          7 |        7 | 15000.00 |
+|       108 |          8 |        8 | 25000.00 |
+|       109 |          9 |        9 | 40000.00 |
+|       110 |         10 |       10 | 55000.00 |
+|       111 |         11 |       11 | 70000.00 |
+|       112 |         12 |       12 | 80000.00 |
+|       113 |          1 |        2 | 22000.00 |
+|       114 |          3 |        1 | 33000.00 |
+|       115 |          5 |        3 | 27000.00 |
++-----------+------------+----------+----------+
+15 rows in set (0.00 sec)
+
+b.
+1.
+mysql> UPDATE Accounts SET Balance = Balance + 5000 WHERE AccountID = 101;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+2.
+mysql> UPDATE Accounts SET Balance = Balance - 10000 WHERE AccountID = 102;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.00 sec)
+
+3.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 7000 WHERE AccountID = 103;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Accounts SET Balance = Balance + 7000 WHERE AccountID = 104;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+4.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 5000 WHERE AccountID = 105;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT sp1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 3000 WHERE AccountID = 106;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> ROLLBACK TO sp1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+5.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 2000 WHERE AccountID = 107;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT a;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 3000 WHERE AccountID = 108;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT b;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 4000 WHERE AccountID = 109;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> ROLLBACK TO a;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+6.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 2000 WHERE AccountID = 110;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT before_second;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 3000 WHERE AccountID = 110;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> ROLLBACK TO before_second;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+7.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts
+    -> SET Balance = Balance - 10000
+    -> WHERE AccountID = 111 AND Balance >= 10000;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> -- Check if update happened
+mysql> SELECT ROW_COUNT();
++-------------+
+| ROW_COUNT() |
++-------------+
+|           1 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql> -- If 0 → ROLLBACK, else COMMIT
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+8.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts
+    -> SET Balance = Balance - 15000
+    -> WHERE AccountID = 112 AND Balance >= 15000;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> UPDATE Accounts
+    -> SET Balance = Balance + 15000
+    -> WHERE AccountID = 101;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+9.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> SAVEPOINT s1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE Accounts SET Balance = Balance + 1000 WHERE AccountID = 102;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT s2;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE Accounts SET Balance = Balance + 1000 WHERE AccountID = 103;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT s3;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE Accounts SET Balance = Balance + 1000 WHERE AccountID = 104;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> ROLLBACK TO s3;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+10.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 5000 WHERE AccountID = 105;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Accounts SET Balance = Balance - 5000 WHERE AccountID = 106;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Accounts SET Balance = Balance + 10000 WHERE AccountID = 107;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+11.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 3000 WHERE AccountID = 108;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> -- Error: invalid column
+mysql> UPDATE Accounts SET InvalidColumn = 100 WHERE AccountID = 999;
+ERROR 1054 (42S22): Unknown column 'InvalidColumn' in 'field list'
+mysql>
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.00 sec)
+
+12.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 2000 WHERE AccountID = 109;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT safe_point;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 500 WHERE AccountID = 109;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> -- If error occurs:
+mysql> ROLLBACK TO safe_point;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+13.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 8000 WHERE AccountID = 110;
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+14.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> SAVEPOINT before_reversal;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 5000 WHERE AccountID = 101;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Accounts SET Balance = Balance - 5000 WHERE AccountID = 102;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> -- If issue:
+mysql> ROLLBACK TO before_reversal;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+15.
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance - 10000 WHERE AccountID = 111;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT step1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 6000 WHERE AccountID = 112;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> SAVEPOINT step2;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> UPDATE Accounts SET Balance = Balance + 4000 WHERE AccountID = 101;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql>
+mysql> ROLLBACK TO step1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+
